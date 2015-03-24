@@ -2,147 +2,63 @@ import QtQuick 2.4
 import QtQuick.Window 2.2
 import QtMultimedia 5.0
 import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.2
 
 Window {
     visible: true
-    title: "AudioTest"
+    //title: "AudioTest"
     width: 400
-    height: 550
-    id: rootWindow
+    height: 600
+    id: window
+    //flags: Qt.Drawer
+    color: "dodgerblue"
+    minimumWidth: width
+    minimumHeight: height
+    maximumWidth: width
+    maximumHeight: height
 
-    Rectangle {
-        id: inputArea
-        color: "yellow"
-        width: parent.width
-        height: 22
-
-        TextInput {
-            id: input
-            anchors.fill: parent
-            onEditingFinished: controller.search(text)
-            focus: true
-        }
-    }
-
-    Rectangle {
-        height: parent.height - inputArea.height - navigation.height
-        width: parent.width
-        anchors.top: inputArea.bottom
-        clip: true
-        color: "wheat"
-
-        ListView {
-            anchors.fill: parent
-            model: searchList
-            delegate: MouseArea {
-                height: 25
-                width: parent.width
-                //color: "white"
-
-                Text {
-                    text: object.title
-                }
-
-                onDoubleClicked: controller.playId(object.id)
-            }
-        }
-    }
-
-    Item {
-        id: navigation
-        height: 100
-        width: parent.width
-        anchors.bottom: parent.bottom
-
-        Item {
-            width: parent.width
-            height: 50
-            Button {
-                anchors.left: parent.left
-                height: parent.height
-                width: parent.height
-                text: "<"
-            }
-
-            Text {
-                id: pos
-                anchors.left: parent.left
-                anchors.leftMargin: 100
-                text: mediaPlayer.position
-            }
-
-            Text {
-                id: delim
-                text: "/"
-                anchors.left: pos.right
-            }
-
-            Text {
-                id: duration
-                anchors.left: delim.right
-                text: mediaPlayer.duration
-            }
-
-            Text {
-                text: mediaPlayer.seekable
-                anchors.left: parent.left
-                anchors.leftMargin: 100
-                anchors.top: pos.bottom
-            }
-
-            Button {
-                anchors.right: parent.right
-                height: parent.height
-                width: parent.height
-                text: ">"
-                onClicked: controller.test()
-            }
-        }
-
-        Item {
-            height: 50
-            width: parent.width
-            anchors.bottom: parent.bottom
-            Slider {
-                anchors.fill: parent
-                maximumValue: mediaPlayer.duration
-                minimumValue: 0
-                value: mediaPlayer.position
-                enabled: mediaPlayer.seekable
-                onValueChanged: {
-                    if (mediaPlayer.position > value + 25 || mediaPlayer.position < value - 25)
-                    {
-                        mediaPlayer.setPosition(value)
-                    }
-                }
-            }
-        }
-    }
-
-//    Button {
-//        id: button
-//        anchors.right: parent.right
-//        anchors.bottom: parent.bottom
-//        onClicked: controller.search(input.text)
-//        text: "Search"
-//        isDefault: true
-//    }
-
-    property variant clickPos
-
-    MouseArea {
+    ListView {
         anchors.fill: parent
+        model: controller.playlist.items
+        delegate: Text {
+            text: object.title
+        }
+    }
 
-        onPressed: {
-            clickPos  = Qt.point(mouse.x,mouse.y)
+    Component.onCompleted: {
+        console.log("controller playlist", controller.playlist);
+        console.log("controller playlist items", controller.playlist.items);
+    }
+
+    Search {
+        id: search
+        height: parent.height
+        width: 350
+        color: "#242424"
+        x: isExpanded ? 0 : -width
+        property bool isExpanded: false
+
+        Behavior on x {
+            NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
         }
 
-        onPositionChanged: {
-            console.log(mouse.x, mouse.y);
-            var delta = Qt.point(mouse.x-clickPos.x, mouse.y-clickPos.y)
-            rootWindow.x = rootWindow.x+delta.x;
-            rootWindow.y = rootWindow.y+delta.y;
-            clickPos = delta
+        Image {
+            anchors.left: parent.right
+            width: 50
+            height: 50
+            //color: "white"
+            source: "images/diamond.png"
+            rotation: search.isExpanded ? 90 : -90
+
+
+            Behavior on rotation {
+                NumberAnimation { duration: 100 }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: search.isExpanded = !search.isExpanded
+            }
         }
     }
 }

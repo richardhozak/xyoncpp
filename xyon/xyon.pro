@@ -5,9 +5,12 @@ QT += qml quick network multimedia
 SOURCES += main.cpp \
     xyoncontroller.cpp \
     qobjectlistmodel.cpp \
-    audioentry.cpp
+    audioentry.cpp \
+    xyonwindow.cpp \
+    xyonplaylist.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    images.qrc
 
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -20,4 +23,6 @@ include(deployment.pri)
 HEADERS += \
     xyoncontroller.h \
     qobjectlistmodel.h \
-    audioentry.h
+    audioentry.h \
+    xyonwindow.h \
+    xyonplaylist.h

@@ -316,4 +316,3 @@ QObject *QObjectListModel::get(int i) const
     \sa indexOf(), count()
 */
 
-
