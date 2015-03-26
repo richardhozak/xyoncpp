@@ -24,6 +24,23 @@ Window {
         //color: "red"
     }
 
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+        opacity: search.percent / 2
+
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                mouse.accepted = false;
+                if (search.isExpanded) {
+                    search.isExpanded = false;
+                }
+            }
+        }
+
+    }
+
     Search {
         id: search
         height: parent.height
@@ -55,6 +72,9 @@ Window {
             }
         }
     }
+
+
+
 
 //    Button {
 //        width: 25

@@ -27,12 +27,13 @@ Rectangle {
         anchors.centerIn: parent
         smooth: true
 
-        ColorOverlay {
-            width: parent.width
-            height: parent.height
-            source: parent
-            color: button.border.color
-        }
+
+    }
+
+    ColorOverlay {
+        anchors.fill: buttonImage
+        source: buttonImage
+        color: button.border.color
     }
 
     MouseArea {
@@ -51,4 +52,3 @@ Rectangle {
         }
     }
 }
-

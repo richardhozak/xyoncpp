@@ -57,7 +57,7 @@ void XyonPlaylist::urlResolved(const AudioEntry &entry, const QUrl &url)
 
         this->player->setMedia(url);
         this->player->play();
-
+        //qDebug() << this->player->errorString();
         //        if (this->player->state() != QMediaPlayer::StoppedState)
         //        {
         //            this->player->setMedia(url);
@@ -119,6 +119,7 @@ void XyonPlaylist::setCurrentPlayingIndex(int index)
     {
         this->currentPlayingIndex = index;
         emit this->currentPlayingIndexChanged();
+        qDebug() << this->player->errorString();
     }
 }
 

@@ -4,6 +4,10 @@ import QtQuick.Controls.Styles 1.2
 
 Rectangle {
 
+    property real percent: 1 - (x / -width)
+
+    //onPercentChanged: console.log("percentil", percent)
+
     TextField {
         id: searchField
         width: parent.width - 20

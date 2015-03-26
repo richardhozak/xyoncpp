@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick network multimedia
+QT += qml quick network multimedia core gui
 
 SOURCES += main.cpp \
     xyoncontroller.cpp \

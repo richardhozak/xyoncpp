@@ -36,41 +36,41 @@ XyonController::XyonController(QQmlContext *context, QObject *parent) : QObject(
 
 bool XyonController::initializeController()
 {
-#ifndef QT_DEBUG
+//#ifndef QT_DEBUG
 
-    QDir dir(QDir::currentPath());
-    QString xyonServerExecutable = dir.entryList(QStringList("xyon-server*"), QDir::Executable | QDir::Files).first();
-    QString executablePath = dir.path() + "/" + xyonServerExecutable;
-    //qDebug() << executablePath;
+//    QDir dir(QDir::currentPath());
+//    QString xyonServerExecutable = dir.entryList(QStringList("xyon-server*"), QDir::Executable | QDir::Files).first();
+//    QString executablePath = dir.path() + "/" + xyonServerExecutable;
+//    //qDebug() << executablePath;
 
-    this->process = new QProcess(this);
-    this->process->start(executablePath);
-    //process->waitForStarted();
-    this->process->waitForReadyRead(2000);
+//    this->process = new QProcess(this);
+//    this->process->start(executablePath);
+//    //process->waitForStarted();
+//    this->process->waitForReadyRead(2000);
 
-    qDebug() << this->process->pid();
+//    qDebug() << this->process->pid();
 
-    QString read = this->process->readAllStandardOutput().simplified();
+//    QString read = this->process->readAllStandardOutput().simplified();
 
-    qDebug() << read;
+//    qDebug() << read;
 
-    if (read == "ERROR")
-    {
-        return false;
-    }
+//    if (read == "ERROR")
+//    {
+//        return false;
+//    }
 
-    this->process->setProcessChannelMode(QProcess::ForwardedChannels);
+//    this->process->setProcessChannelMode(QProcess::ForwardedChannels);
+
+//    this->connectToHost();
+
+//    return true;
+
+//#else
 
     this->connectToHost();
-
     return true;
 
-#else
-
-    this->connectToHost();
-    return true;
-
-#endif
+//#endif
 }
 
 void XyonController::connectToHost()

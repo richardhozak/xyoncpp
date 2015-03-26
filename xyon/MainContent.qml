@@ -108,17 +108,17 @@ Item {
                 }
 
                 Image {
+                    id: playListButtonImage
                     anchors.fill: playListButton
                     source: controller.playlist.currentPlayingIndex === index ? "images/stop.png" : "images/play.png"
                     fillMode: Image.PreserveAspectFit
                     smooth: true
+                }
 
-                    ColorOverlay {
-                        width: parent.width
-                        height: parent.height
-                        source: parent
-                        color: "#343434"
-                    }
+                ColorOverlay {
+                    anchors.fill: playListButtonImage
+                    source: playListButtonImage
+                    color: "#343434"
                 }
 
                 Rectangle {
@@ -145,19 +145,19 @@ Item {
                 }
 
                 Image {
+                    id: removeFromListButtonImage
                     width: removeFromListButton.width / 2
                     height: width
                     anchors.centerIn: removeFromListButton
                     source: "images/delete.png"
                     fillMode: Image.PreserveAspectFit
                     smooth: true
+                }
 
-                    ColorOverlay {
-                        width: parent.width
-                        height: parent.height
-                        source: parent
-                        color: "#343434"
-                    }
+                ColorOverlay {
+                    anchors.fill: removeFromListButtonImage
+                    source: removeFromListButtonImage
+                    color: "#343434"
                 }
 
                 Rectangle {
@@ -344,7 +344,9 @@ Item {
 
             Connections {
                 target: controller.playlist
-                onCurrentPlayingIndexChanged: console.log("current playing index", controller.playlist.currentPlayingIndex)
+                onCurrentPlayingIndexChanged: {
+                    console.log("current playing index", controller.playlist.currentPlayingIndex);
+                }
             }
 
             RoundButton {
