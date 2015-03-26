@@ -6,7 +6,6 @@ SOURCES += main.cpp \
     xyoncontroller.cpp \
     qobjectlistmodel.cpp \
     audioentry.cpp \
-    xyonwindow.cpp \
     xyonplaylist.cpp
 
 RESOURCES += qml.qrc \
@@ -24,5 +23,4 @@ HEADERS += \
     xyoncontroller.h \
     qobjectlistmodel.h \
     audioentry.h \
-    xyonwindow.h \
     xyonplaylist.h

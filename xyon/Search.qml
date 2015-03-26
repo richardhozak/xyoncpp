@@ -7,12 +7,16 @@ Rectangle {
     TextField {
         id: searchField
         width: parent.width - 20
+        height: 32
+        font.pixelSize: 20
+
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.leftMargin: 10
         anchors.topMargin: 10
+
         placeholderText: "Search..."
-        //verticalAlignment: TextInput.AlignBottom
+
         style: TextFieldStyle {
             textColor: "black"
             background: Rectangle {
@@ -24,17 +28,39 @@ Rectangle {
                 color: "#dbdbdb"
             }
         }
+
         onAccepted: controller.search(text)
     }
 
     Item {
+        id: searchResultsContainer
         anchors.top: searchField.bottom
         width: parent.width
-        height: parent.height - searchField.height - 10
+        height: parent.height - searchField.height - 10 - loadMoreButton.height
 
         ScrollView {
             anchors.fill: parent
             anchors.topMargin: 10
+            anchors.bottomMargin: 10
+
+            style: ScrollViewStyle {
+                handle: Item {
+                    implicitWidth: 14
+                    implicitHeight: 26
+                    Rectangle {
+                        color: "#494949"
+                        anchors.fill: parent
+                        anchors.leftMargin: 4
+                        anchors.rightMargin: 4
+                    }
+                }
+                scrollBarBackground: Item {
+                    implicitWidth: 14
+                    implicitHeight: 26
+                }
+                decrementControl: Item{}
+                incrementControl: Item{}
+            }
 
             ListView {
                 anchors.fill: parent
@@ -56,6 +82,7 @@ Rectangle {
                         color: "#dbdbdb"
                         elide: Text.ElideRight
                         width: parent.width - addButton.width - (hoverArea.containsMouse ? 5 : 0)
+                        font.pixelSize: 16
                     }
                     Text {
                         anchors.right: parent.right
@@ -63,6 +90,7 @@ Rectangle {
                         anchors.bottomMargin: 5
                         text: object.time
                         color: "#dbdbdb"
+                        font.pixelSize: 16
 
                         Rectangle {
                             width: parent.width
@@ -119,6 +147,36 @@ Rectangle {
                 }
             }
         }
+    }
+
+    Button {
+        id: loadMoreButton
+        anchors.top: searchResultsContainer.bottom
+        height: 25
+        width: parent.width
+        text: "Load more"
+        visible: searchList.count > 0
+        style: ButtonStyle {
+            background: Rectangle {
+                implicitWidth: 100
+                implicitHeight: 25
+                //border.width: control.activeFocus ? 2 : 1
+                //border.color: loadMoreButton.pressed ? "#dbdbdb" : "#494949"
+                color: loadMoreButton.pressed ? Qt.lighter("#494949"): "#494949"
+            }
+            label: Component {
+                Text {
+                    text: loadMoreButton.text
+                    clip: true
+                    wrapMode: Text.WordWrap
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.fill: parent
+                    color: loadMoreButton.pressed ? "black" : "#dbdbdb"
+                }
+            }
+        }
+        onClicked: controller.loadMore()
     }
 
     //                    Rectangle {

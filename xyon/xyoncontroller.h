@@ -5,6 +5,7 @@
 #include <QTcpSocket>
 #include <QQmlContext>
 #include <QMediaPlayer>
+#include <QProcess>
 
 #include "qobjectlistmodel.h"
 #include "xyonplaylist.h"
@@ -24,6 +25,8 @@ private:
     QMediaPlayer *player;
     QString lastSearchQuery;
     const AudioEntry *entry;
+
+    QProcess *process;
 
     int page;
     XyonPlaylist *playlist;
@@ -45,6 +48,8 @@ private:
         emit this->canGoPreviousPageChanged();
     }
 
+    void connectToHost();
+
 public:
     explicit XyonController(QQmlContext *context, QObject *parent = 0);
 
@@ -57,6 +62,7 @@ public:
     Q_INVOKABLE void test();
     Q_INVOKABLE void goNextPage();
     Q_INVOKABLE void goPreviousPage();
+
 
     bool getCanGoPreviousPage() const
     {
@@ -87,13 +93,17 @@ public:
         return this->playlist;
     }
 
+    bool initializeController();
+
+    ~XyonController();
+
 signals:
     void canGoPreviousPageChanged();
     void canGoNextPageChanged();
     void pageChanged();
 
 public slots:
-
+    void loadMore();
 
 };
 

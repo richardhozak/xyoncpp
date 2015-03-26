@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDebug>
+#include <QDir>
 
 XyonController::XyonController(QQmlContext *context, QObject *parent) : QObject(parent), page(1)
 {
@@ -13,8 +14,8 @@ XyonController::XyonController(QQmlContext *context, QObject *parent) : QObject(
     player = new QMediaPlayer(this);
     playlist = new XyonPlaylist(player);
 
+    this->process = NULL;
     socket = new QTcpSocket(this);
-    socket->connectToHost("localhost", 2323);
     searchList = new QObjectListModel(this);
 
     context->setContextProperty("controller", this);
@@ -26,8 +27,55 @@ XyonController::XyonController(QQmlContext *context, QObject *parent) : QObject(
 
     connect(socket, &QTcpSocket::readyRead, this, &XyonController::receive);
     connect(playlist, &XyonPlaylist::resolveUrl, this, &XyonController::resolveUrl);
+
+
+    //this->connectToHost();
 //    player->setMedia(QUrl::fromLocalFile("/home/richard/Downloads/song.wav"));
 //    player->play();
+}
+
+bool XyonController::initializeController()
+{
+#ifndef QT_DEBUG
+
+    QDir dir(QDir::currentPath());
+    QString xyonServerExecutable = dir.entryList(QStringList("xyon-server*"), QDir::Executable | QDir::Files).first();
+    QString executablePath = dir.path() + "/" + xyonServerExecutable;
+    //qDebug() << executablePath;
+
+    this->process = new QProcess(this);
+    this->process->start(executablePath);
+    //process->waitForStarted();
+    this->process->waitForReadyRead(2000);
+
+    qDebug() << this->process->pid();
+
+    QString read = this->process->readAllStandardOutput().simplified();
+
+    qDebug() << read;
+
+    if (read == "ERROR")
+    {
+        return false;
+    }
+
+    this->process->setProcessChannelMode(QProcess::ForwardedChannels);
+
+    this->connectToHost();
+
+    return true;
+
+#else
+
+    this->connectToHost();
+    return true;
+
+#endif
+}
+
+void XyonController::connectToHost()
+{
+    socket->connectToHost("localhost", 2323);
 }
 
 void XyonController::playId(const QString &id)
@@ -45,6 +93,18 @@ void XyonController::search(const QString &query)
     this->lastSearchQuery = query;
     this->page = 1;
     this->writeMethodObject("search", {{"search_query", query}, {"page", this->page}});
+    this->emitChange();
+}
+
+void XyonController::loadMore()
+{
+    if (this->lastSearchQuery == "")
+    {
+        return;
+    }
+
+    this->page++;
+    this->writeMethodObject("load_more", {{"search_query", this->lastSearchQuery}, {"page", this->page}});
     this->emitChange();
 }
 
@@ -77,7 +137,7 @@ void XyonController::resolveUrl(const AudioEntry &entry)
 void XyonController::receive()
 {
     QJsonDocument doc = QJsonDocument::fromJson(this->socket->readAll());
-    qDebug() << doc;
+    //qDebug() << doc;
     if (doc.isObject())
     {
         QJsonObject rootObject = doc.object();
@@ -86,11 +146,15 @@ void XyonController::receive()
 
         QString method = rootObject["method"].toString();
 
-        if (method == "response_search")
+        if (method == "response_search" || method == "response_load_more")
         {
             if (rootObject["params"].isArray())
             {
-                searchList->clear();
+                if (method == "response_search")
+                {
+                    searchList->clear();
+                }
+
                 QJsonArray array = rootObject["params"].toArray();
                 for (int i = 0; i < array.size(); i++)
                 {
@@ -138,13 +202,13 @@ void XyonController::goNextPage()
     {
         this->setPage(this->page + 1);
         this->emitChange();
+
         QJsonObject obj {
             {"search_query", this->lastSearchQuery},
             {"page", this->page}
         };
 
         this->writeMethodObject("search", obj);
-
     }
 }
 
@@ -161,5 +225,13 @@ void XyonController::goPreviousPage()
         };
 
         this->writeMethodObject("search", obj);
+    }
+}
+
+XyonController::~XyonController()
+{
+    if (this->process != NULL)
+    {
+        this->process->terminate();
     }
 }

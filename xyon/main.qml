@@ -8,7 +8,7 @@ Window {
     visible: true
     //title: "AudioTest"
     width: 400
-    height: 600
+    height: 500
     id: window
     //flags: Qt.Drawer
     color: "dodgerblue"
@@ -17,17 +17,11 @@ Window {
     maximumWidth: width
     maximumHeight: height
 
-    ListView {
-        anchors.fill: parent
-        model: controller.playlist.items
-        delegate: Text {
-            text: object.title
-        }
-    }
-
-    Component.onCompleted: {
-        console.log("controller playlist", controller.playlist);
-        console.log("controller playlist items", controller.playlist.items);
+    MainContent {
+        width: parent.width
+        height: parent.height - 50
+        anchors.bottom: parent.bottom
+        //color: "red"
     }
 
     Search {
@@ -61,4 +55,12 @@ Window {
             }
         }
     }
+
+//    Button {
+//        width: 25
+//        height: 25
+//        anchors.right: parent.right
+//        text: "X"
+//        onClicked: window.close()
+//    }
 }
